@@ -5,8 +5,7 @@ using System.Text;
 public class ZombieFactory : SmartContract
 {
     public uint dnaDigits;
-    public uint dnaModulus;
-
+    public long dnaModulus;
 
     public ISmartContractList<Zombie> Zombies
     {
@@ -16,16 +15,15 @@ public class ZombieFactory : SmartContract
         }
     }
 
-
     public ZombieFactory(ISmartContractState smartContractState) : base(smartContractState)
     {
         this.dnaDigits = 16;
-        this.dnaModulus = UIntPow(10, dnaDigits);
+        this.dnaModulus = Pow(10, dnaDigits);
     }
 
-    private uint UIntPow(uint x, uint pow)
+    long Pow(long x, uint pow)
     {
-        uint ret = 1;
+        long ret = 1;
         while (pow != 0)
         {
             if ((pow & 1) == 1)
@@ -36,19 +34,23 @@ public class ZombieFactory : SmartContract
         return ret;
     }
 
+    public void CreateRandomZombie(string name)
+    {
+        uint dna = GenerateRandomDna(name);
+        CreateZombie(name, dna);
+    }
 
     private void CreateZombie(string name, uint dna)
     {
         PersistentState.GetList<Zombie>("zombies").Add(new Zombie(name, dna));
     }
 
-    private string GenerateRandomDna(string name)
+    private uint GenerateRandomDna(string name)
     {
         byte[] rand = Keccak256(Encoding.ASCII.GetBytes(name));
 
-        return Encoding.ASCII.GetString(rand);
+        return BitConverter.ToUInt32(rand, 0);
     }
-
 
     public struct Zombie
     {

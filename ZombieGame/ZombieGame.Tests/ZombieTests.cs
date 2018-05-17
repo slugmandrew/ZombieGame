@@ -63,19 +63,22 @@ namespace ZombieGame.Tests
         }
 
         [TestMethod]
-        public void TestVars()
-        {
-            ZombieFactory factory = new ZombieFactory(SmartContractState);
-
-            Assert.AreEqual(16, factory.dnaDigits);
-        }
-
-        [TestMethod]
         public void TestExponent()
         {
             ZombieFactory factory = new ZombieFactory(SmartContractState);
 
             Assert.AreEqual(10000000000000000, factory.dnaModulus);
+        }
+
+        [TestMethod]
+        public void TestRandomZombieGenerator()
+        {
+            ZombieFactory factory = new ZombieFactory(SmartContractState);
+
+            factory.CreateRandomZombie("drew");
+            factory.CreateRandomZombie("verity");
+
+            Assert.AreEqual((uint)2, factory.Zombies.Count);
         }
 
         //[TestMethod]
