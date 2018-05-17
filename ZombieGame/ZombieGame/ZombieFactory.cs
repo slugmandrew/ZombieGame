@@ -1,23 +1,33 @@
 ﻿using Stratis.SmartContracts;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
-public class ZombieFactory : SmartContract
+namespace ZombieGame
 {
-    public int dnaDigits = 16;
 
-    public Double DnaModulus
+    public class ZombieFactory : SmartContract
     {
-        get
+        public uint dnaDigits = 16;
+
+
+        public Double DnaModulus
         {
-            return Math.Pow(10, dnaDigits);
+            get
+            {
+                return Math.Pow(10, dnaDigits);
+            }
         }
-    }
 
 
+        public List<Zombie> zombies = new List<Zombie>();
 
-    public ZombieFactory(ISmartContractState smartContractState) : base(smartContractState)
-    {
-        
+
+        public ZombieFactory(ISmartContractState smartContractState) : base(smartContractState)
+        {
+
+        }
+
     }
 
 }
