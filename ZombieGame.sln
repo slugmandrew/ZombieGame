@@ -8,9 +8,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZombieGame.Tests", "ZombieGame\ZombieGame.Tests\ZombieGame.Tests.csproj", "{0451FE81-9208-442B-BF6F-9B406EC9905B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A876DD8E-7058-4C42-B6C4-DE84F8E60DED}"
-	ProjectSection(SolutionItems) = preProject
-		Zombie.cs = Zombie.cs
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

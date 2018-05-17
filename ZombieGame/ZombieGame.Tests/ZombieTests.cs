@@ -75,7 +75,7 @@ namespace ZombieGame.Tests
         {
             ZombieFactory factory = new ZombieFactory(SmartContractState);
 
-            Assert.AreEqual(10000000000000000, factory.DnaModulus);
+            Assert.AreEqual(10000000000000000, factory.dnaModulus);
         }
 
         //[TestMethod]

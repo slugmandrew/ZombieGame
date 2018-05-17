@@ -1,35 +1,65 @@
 ﻿using Stratis.SmartContracts;
 using System;
-using System.Collections.Generic;
+using System.Text;
 
-namespace ZombieGame
+public class ZombieFactory : SmartContract
 {
+    public uint dnaDigits;
+    public uint dnaModulus;
 
-    public class ZombieFactory : SmartContract
+
+    public ISmartContractList<Zombie> Zombies
     {
-        public uint dnaDigits = 16;
-
-        public Double DnaModulus
+        get
         {
-            get
-            {
-                return Math.Pow(10, dnaDigits);
-            }
+            return PersistentState.GetList<Zombie>("zombies");
         }
+    }
 
-        public List<Zombie> zombies = new List<Zombie>();
 
+    public ZombieFactory(ISmartContractState smartContractState) : base(smartContractState)
+    {
+        this.dnaDigits = 16;
+        this.dnaModulus = UIntPow(10, dnaDigits);
+    }
 
-        public ZombieFactory(ISmartContractState smartContractState) : base(smartContractState)
+    private uint UIntPow(uint x, uint pow)
+    {
+        uint ret = 1;
+        while (pow != 0)
         {
-
+            if ((pow & 1) == 1)
+                ret *= x;
+            x *= x;
+            pow >>= 1;
         }
+        return ret;
+    }
 
-        public void CreateZombie(string name, uint dna)
+
+    private void CreateZombie(string name, uint dna)
+    {
+        PersistentState.GetList<Zombie>("zombies").Add(new Zombie(name, dna));
+    }
+
+    private string GenerateRandomDna(string name)
+    {
+        byte[] rand = Keccak256(Encoding.ASCII.GetBytes(name));
+
+        return Encoding.ASCII.GetString(rand);
+    }
+
+
+    public struct Zombie
+    {
+        string Name { get; set; }
+        uint Dna { get; set; }
+
+        public Zombie(string name, uint dna)
         {
-            zombies.Add(new Zombie(name, dna));
+            this.Name = name;
+            this.Dna = dna;
         }
-
     }
 
 }
