@@ -4,12 +4,18 @@ namespace ZombieGame
 {
     public class Zombie
     {
-        string name { get; set; }
-        uint dna { get; set; }
+        string Name { get; set; }
+        uint Dna { get; set; }
 
         public Zombie()
         {
 
+        }
+
+        public Zombie(string name, uint dna)
+        {
+            this.Name = name;
+            this.Dna = dna;
         }
     }
 }
