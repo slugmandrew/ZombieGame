@@ -65,9 +65,9 @@ namespace ZombieGame.Tests
         [TestMethod]
         public void TestExponent()
         {
-            ZombieFactory factory = new ZombieFactory(SmartContractState);
+            ZombieFactory factory = new ZombieFactory(SmartContractState, 20);
 
-            Assert.AreEqual((ulong)10000000000000000, factory.dnaModulus);
+            Assert.AreEqual((ulong)10000000000000000, factory.DnaModulus);
         }
 
 
@@ -91,7 +91,7 @@ namespace ZombieGame.Tests
         [TestMethod]
         public void TestRandomZombieGenerator()
         {
-            ZombieFactory factory = new ZombieFactory(SmartContractState);
+            ZombieFactory factory = new ZombieFactory(SmartContractState, 20);
 
             factory.CreateRandomZombie("drew");
             factory.CreateRandomZombie("verity");

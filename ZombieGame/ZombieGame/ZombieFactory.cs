@@ -3,8 +3,65 @@ using System;
 
 public class ZombieFactory : SmartContract
 {
-    readonly public uint dnaDigits;
-    readonly public ulong dnaModulus;
+    public uint DnaDigits
+    {
+        get
+        {
+            return PersistentState.GetUInt32("DnaDigits");
+        }
+        set
+        {
+            PersistentState.SetUInt32("DnaDigits", value);
+        }
+    }
+
+    public ulong DnaModulus
+    {
+        get
+        {
+            return PersistentState.GetUInt64("DnaModulus");
+        }
+        set
+        {
+            PersistentState.SetUInt64("DnaModulus", value);
+        }
+    }
+
+    public Address Owner
+    {
+        get
+        {
+            return PersistentState.GetAddress("Owner");
+        }
+        set
+        {
+            PersistentState.SetAddress("Owner", value);
+        }
+    }
+
+    public ulong EndBlock
+    {
+        get
+        {
+            return PersistentState.GetUInt64("EndBlock");
+        }
+        set
+        {
+            PersistentState.SetUInt64("EndBlock", value);
+        }
+    }
+
+    public bool HasEnded
+    {
+        get
+        {
+            return PersistentState.GetBool("HasEnded");
+        }
+        set
+        {
+            PersistentState.SetBool("HasEnded", value);
+        }
+    }
 
     public ISmartContractList<Zombie> Zombies
     {
@@ -14,10 +71,13 @@ public class ZombieFactory : SmartContract
         }
     }
 
-    public ZombieFactory(ISmartContractState smartContractState) : base(smartContractState)
+    public ZombieFactory(ISmartContractState smartContractState, ulong durationBlocks) : base(smartContractState)
     {
-        this.dnaDigits = 16;
-        this.dnaModulus = Pow(10, dnaDigits);
+        Owner = Message.Sender;
+        EndBlock = Block.Number + durationBlocks;
+        HasEnded = false;
+        DnaDigits = 16;
+        DnaModulus = Pow(10, DnaDigits);
     }
 
     public void CreateRandomZombie(string name)
@@ -26,14 +86,14 @@ public class ZombieFactory : SmartContract
         CreateZombie(name, dna);
     }
 
-    private void CreateZombie(string name, ulong dna)
+    public void CreateZombie(string name, ulong dna)
     {
         Zombies.Add(new Zombie(name, dna));
     }
 
     private ulong GenerateRandomDna(string name)
     {
-        return HashStringTo18DigitNumber(name) % dnaModulus;
+        return HashStringTo18DigitNumber(name) % DnaModulus;
     }
 
     public struct Zombie
