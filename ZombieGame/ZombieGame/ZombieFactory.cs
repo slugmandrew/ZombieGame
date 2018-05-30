@@ -1,17 +1,16 @@
 ﻿using Stratis.SmartContracts;
 using System;
-using System.Text;
 
 public class ZombieFactory : SmartContract
 {
-    public uint dnaDigits;
-    public long dnaModulus;
+    readonly public uint dnaDigits;
+    readonly public ulong dnaModulus;
 
     public ISmartContractList<Zombie> Zombies
     {
         get
         {
-            return PersistentState.GetList<Zombie>("zombies");
+            return PersistentState.GetStructList<Zombie>("zombies");
         }
     }
 
@@ -21,9 +20,40 @@ public class ZombieFactory : SmartContract
         this.dnaModulus = Pow(10, dnaDigits);
     }
 
-    long Pow(long x, uint pow)
+    public void CreateRandomZombie(string name)
     {
-        long ret = 1;
+        ulong dna = GenerateRandomDna(name);
+        CreateZombie(name, dna);
+    }
+
+    private void CreateZombie(string name, ulong dna)
+    {
+        Zombies.Add(new Zombie(name, dna));
+    }
+
+    private ulong GenerateRandomDna(string name)
+    {
+        return HashStringTo18DigitNumber(name) % dnaModulus;
+    }
+
+    public struct Zombie
+    {
+        string Name { get; set; }
+        ulong Dna { get; set; }
+
+        public Zombie(string name, ulong dna)
+        {
+            this.Name = name;
+            this.Dna = dna;
+        }
+    }
+
+
+    // ********** BEGIN My custom methods
+
+    private ulong Pow(ulong x, uint pow)
+    {
+        ulong ret = 1;
         while (pow != 0)
         {
             if ((pow & 1) == 1)
@@ -34,34 +64,63 @@ public class ZombieFactory : SmartContract
         return ret;
     }
 
-    public void CreateRandomZombie(string name)
+    // ********** END My custom methods
+
+
+
+    // ********** BEGIN Hashing helper methods from https://github.com/StratisDevelopmentFoundation/Sample_Stratis_Smart_Contracts/blob/master/HashString.cs
+
+    public ulong HashStringTo18DigitNumber(string s)
     {
-        uint dna = GenerateRandomDna(name);
-        CreateZombie(name, dna);
+        byte[] bytes = StringToByteArray(s);
+        var firstHash = Keccak256(bytes);
+        var hashedBytes = Keccak256(firstHash);
+        var stringOfNumbers = byteArrayToNumberString(hashedBytes);
+        return (ulong)Int64.Parse(stringOfNumbers.Substring(Math.Max(stringOfNumbers.Length - UInt64.MaxValue.ToString().Length, 0)));
     }
 
-    private void CreateZombie(string name, uint dna)
+    public string HashStringToAlphaNumericString(string s)
     {
-        PersistentState.GetList<Zombie>("zombies").Add(new Zombie(name, dna));
+        byte[] bytes = StringToByteArray(s);
+        var firstHash = Keccak256(bytes);
+        var hashedBytes = Keccak256(firstHash);
+        return byteArrayToAlphaNumericString(hashedBytes);
     }
 
-    private uint GenerateRandomDna(string name)
+    private byte[] StringToByteArray(string s)
     {
-        byte[] rand = Keccak256(Encoding.ASCII.GetBytes(name));
-
-        return BitConverter.ToUInt32(rand, 0);
-    }
-
-    public struct Zombie
-    {
-        string Name { get; set; }
-        uint Dna { get; set; }
-
-        public Zombie(string name, uint dna)
+        var chars = s.ToCharArray();
+        byte[] bytes = new byte[chars.Length];
+        var loopcount = 0;
+        foreach (var singleCharacter in chars)
         {
-            this.Name = name;
-            this.Dna = dna;
+            bytes[loopcount] = (byte)chars[loopcount];
+            loopcount++;
         }
+        return bytes;
     }
+
+    private string byteArrayToNumberString(byte[] bytes)
+    {
+        var outputString = "";
+        foreach (var singleByte in bytes)
+        {
+            outputString = outputString + singleByte.ToString();
+        }
+        return outputString;
+    }
+
+    private string byteArrayToAlphaNumericString(byte[] bytes)
+    {
+        var base58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+        var outputString = "";
+        foreach (var singleByte in bytes)
+        {
+            outputString = outputString + base58[(int)singleByte % 58];
+        }
+        return outputString;
+    }
+
+    // ********** END HASHING HELPER METHODS
 
 }

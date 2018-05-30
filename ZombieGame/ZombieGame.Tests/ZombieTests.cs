@@ -67,8 +67,26 @@ namespace ZombieGame.Tests
         {
             ZombieFactory factory = new ZombieFactory(SmartContractState);
 
-            Assert.AreEqual(10000000000000000, factory.dnaModulus);
+            Assert.AreEqual((ulong)10000000000000000, factory.dnaModulus);
         }
+
+
+        //[TestMethod]
+        //public void TestKeccak()
+        //{
+        //    ZombieFactory factory = new ZombieFactory(SmartContractState);
+
+        //    string hash1 = factory.DoHash("drew");
+        //    string hash2 = factory.DoHash("john");
+        //    string hash3 = factory.DoHash("verity");
+
+        //    Console.WriteLine($"Hash of drew: {hash1}");
+        //    Console.WriteLine($"Hash of john: {hash2}");
+        //    Console.WriteLine($"Hash of verity: {hash3}");
+
+        //    Assert.AreEqual(hash1, hash2);
+        //    Assert.AreEqual(hash2, hash3);
+        //}
 
         [TestMethod]
         public void TestRandomZombieGenerator()
